@@ -4,9 +4,7 @@ import os
 load_dotenv()
 
 DATABASE_URL = os.environ['DATABASE_URL']
-REDIS_HOST = os.environ['REDIS_HOST']
-REDIS_PORT = int(os.environ['REDIS_PORT'])
-REDIS_DB = int(os.environ['REDIS_DB'])
+REDIS_URL = os.environ['REDIS_URL']
 GMAIL_APP_PASSWORD = os.environ['GMAIL_APP_PASSWORD']
 APP_EMAIL = os.environ['APP_EMAIL']
 JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
