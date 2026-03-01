@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     R2_BUCKET_NAME: str
     MATERIAL_FOLDER: str
     MAX_FILE_SIZE_MB: int
+    UPSTASH_VECTOR_REST_URL: str
+    UPSTASH_VECTOR_REST_TOKEN: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
