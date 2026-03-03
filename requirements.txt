@@ -21,4 +21,4 @@ beautifulsoup4
 python-pptx
 odfpy
 striprtf
-upstash‑vector
+upstash-vector
