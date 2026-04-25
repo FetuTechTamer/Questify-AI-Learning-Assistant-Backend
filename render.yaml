@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: questify-backend
+    runtime: python
+    repo: https://github.com/FetuTechTamer/Questify-AI-Learning-Assistant-Backend
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:///./questify.db
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: JWT_SECRET_KEY
+        generateValue: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
