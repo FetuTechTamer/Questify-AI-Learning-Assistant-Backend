@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.routers import ai_routes
 
 from app.db.base import Base
 from app.db.session import engine
@@ -20,9 +20,15 @@ from app.core.exceptions import (AppException, NotFoundException, AlreadyExistsE
 
 app = FastAPI()
 
+# Updated CORS configuration - specify your frontend URLs
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://questifyai-five.vercel.app",
+        "https://questify-ai-learning-assistant-fron.vercel.app",
+        "http://localhost:5173",  # Local development
+        "http://localhost:3000",   # Alternative local port
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,8 +36,10 @@ app.add_middleware(
 
 app.include_router(auth_routes.router, prefix="/api/auth")
 app.include_router(material_routes.router, prefix="/api/material")
+app.include_router(ai_routes.router)
 
 app.mount("/assets", StaticFiles(directory="app/infrastructure/templates/assets"), name="assets")
+
 @app.get("/", response_class=HTMLResponse)
 def home():
     template = jinja_env.get_template("index.html")
@@ -52,46 +60,37 @@ def on_startup():
 async def app_exception_handler(request: Request, exc: AppException):
     return error_response(str(exc), status_code=status.HTTP_400_BAD_REQUEST)
 
-
 @app.exception_handler(NotFoundException)
 async def not_found_handler(request: Request, exc: NotFoundException):
     return error_response(str(exc), status_code=status.HTTP_404_NOT_FOUND)
-
 
 @app.exception_handler(AlreadyExistsException)
 async def already_exists_handler(request: Request, exc: AlreadyExistsException):
     return error_response(str(exc), status_code=status.HTTP_409_CONFLICT)
 
-
 @app.exception_handler(UnauthorizedException)
 async def unauthorized_handler(request: Request, exc: UnauthorizedException):
     return error_response(str(exc), status_code=status.HTTP_401_UNAUTHORIZED)
-
 
 @app.exception_handler(PermissionDeniedException)
 async def forbidden_handler(request: Request, exc: PermissionDeniedException):
     return error_response(str(exc), status_code=status.HTTP_403_FORBIDDEN)
 
-
 @app.exception_handler(ValidationException)
 async def validation_handler(request: Request, exc: ValidationException):
     return error_response(str(exc), status_code=status.HTTP_400_BAD_REQUEST)
-
 
 @app.exception_handler(ConflictException)
 async def conflict_handler(request: Request, exc: ConflictException):
     return error_response(str(exc), status_code=status.HTTP_409_CONFLICT)
 
-
 @app.exception_handler(BusinessRuleViolation)
 async def business_rule_violation_handler(request: Request, exc: BusinessRuleViolation):
     return error_response(str(exc), status_code=status.HTTP_400_BAD_REQUEST)
 
-
 @app.exception_handler(DatabaseException)
 async def database_exception_handler(request: Request, exc: DatabaseException):
     return error_response(str(exc), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @app.exception_handler(ExternalServiceException)
 async def external_service_exception_handler(request: Request, exc: ExternalServiceException):
